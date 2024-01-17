@@ -20,9 +20,10 @@
  *      Author: fil
  */
 #include "main.h"
+
+#include "../../../A_os/modules/audio/Generators_dont_include_yet/oscillator_core.h"
+#include "../../../A_os/modules/audio/Generators_dont_include_yet/oscillators.h"
 #include "A_os_includes.h"
-#include "../../../A_os/modules/audio/Generators/oscillators.h"
-#include "../../../A_os/modules/audio/Generators/oscillator_core.h"
 
 void ena_osc(void)
 {
@@ -66,8 +67,7 @@ void dis_osc(void)
 }
 void process_1_audio(uint32_t process_id)
 {
-	uint32_t	wakeup;
-#ifdef	P1_ENABLED
+uint32_t	wakeup;
 uint8_t	dir = 1;
 uint32_t	*audiobuf;
 
@@ -95,12 +95,4 @@ uint32_t	*audiobuf;
 			}
 		}
 	}
-#else
-	create_timer(TIMER_ID_0,100,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
-
-	while(1)
-	{
-		wakeup = wait_event(EVENT_TIMER);
-	}
-#endif
 }
