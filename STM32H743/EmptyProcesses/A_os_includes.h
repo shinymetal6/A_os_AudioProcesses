@@ -11,26 +11,26 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * Project : bb1xx_743_00 
+ * Project : fy-201023-01 
 */
 /*
- * A_os_AudioInclude.h
+ * A_os_includes.h
  *
- *  Created on: Jan 3, 2024
+ *  Created on: Jan 2, 2024
  *      Author: fil
  */
 
-#ifndef STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_
-#define STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_
+#ifndef STM32H743_BASICPROCESSES_A_OS_INCLUDES_H_
+#define STM32H743_BASICPROCESSES_A_OS_INCLUDES_H_
+
+#include "../../../A_os/kernel/A.h"
 #include "../../../A_os/kernel/system_default.h"
-#ifdef BB1xx_743
+#include "../../../A_os/kernel/A_exported_functions.h"
+#ifdef CODEC_NAU88C22
+#include "../../../A_os/drivers/codec/nau88c22.h"
+#endif
+#include "ff.h"
+#include <stdio.h>
+#include <string.h>
 
-#include "../../../A_os/drivers/internal_adc/internal_adc.h"
-#include "../../../A_os/drivers/lcd_st7735/st7735.h"
-#include "../../../A_os/drivers/lcd_st7735/lcd_7735.h"
-
-extern	void Draw_Logo(uint16_t *logo);
-
-#endif	//#ifdef BB1xx_743
-
-#endif /* STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_ */
+#endif /* STM32H743_BASICPROCESSES_A_OS_INCLUDES_H_ */

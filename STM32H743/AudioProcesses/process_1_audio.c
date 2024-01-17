@@ -66,7 +66,8 @@ void dis_osc(void)
 }
 void process_1_audio(uint32_t process_id)
 {
-uint32_t	wakeup;
+	uint32_t	wakeup;
+#ifdef	P1_ENABLED
 uint8_t	dir = 1;
 uint32_t	*audiobuf;
 
@@ -94,4 +95,12 @@ uint32_t	*audiobuf;
 			}
 		}
 	}
+#else
+	create_timer(TIMER_ID_0,100,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
+
+	while(1)
+	{
+		wakeup = wait_event(EVENT_TIMER);
+	}
+#endif
 }

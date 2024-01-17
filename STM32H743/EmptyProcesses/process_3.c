@@ -14,23 +14,16 @@
  * Project : bb1xx_743_00 
 */
 /*
- * A_os_AudioInclude.h
+ * process_3.c
  *
  *  Created on: Jan 3, 2024
  *      Author: fil
  */
 
-#ifndef STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_
-#define STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_
-#include "../../../A_os/kernel/system_default.h"
-#ifdef BB1xx_743
+#include "main.h"
+#include "A_os_includes.h"
 
-#include "../../../A_os/drivers/internal_adc/internal_adc.h"
-#include "../../../A_os/drivers/lcd_st7735/st7735.h"
-#include "../../../A_os/drivers/lcd_st7735/lcd_7735.h"
-
-extern	void Draw_Logo(uint16_t *logo);
-
-#endif	//#ifdef BB1xx_743
-
-#endif /* STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_ */
+void process_3(uint32_t process_id)
+{
+	while(1);
+}

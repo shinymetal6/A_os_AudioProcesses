@@ -19,7 +19,8 @@ uint8_t rtext[256];
 
 void process_2_fat_flash(uint32_t process_id)
 {
-uint32_t	wakeup;
+	uint32_t	wakeup;
+#ifdef	P2_ENABLED
 uint32_t	bytesread,byteswritten;
 uint8_t		res;
 
@@ -49,6 +50,13 @@ uint8_t		res;
 		}
 		*/
 	}
+#else
+	create_timer(TIMER_ID_0,1000,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
+	while(1)
+	{
+		wakeup = wait_event(EVENT_TIMER);
+	}
+#endif
 }
 
 
