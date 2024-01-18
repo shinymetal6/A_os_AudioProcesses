@@ -75,6 +75,7 @@ uint16_t	logo_brightness=ZERO_BRIGHTNESS;
 		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
 		{
 			activation_flag = get_activation_flags();
+#ifdef	SPLASH
 			if ((activation_flag & TIMER_ID_0) == TIMER_ID_0)
 			{
 				switch(MenuStruct.menu_state)
@@ -96,6 +97,14 @@ uint16_t	logo_brightness=ZERO_BRIGHTNESS;
 					break;
 				}
 			}
+#else
+			if ( MenuStruct.menu_state == MENU_SPLASH)
+			{
+				MenuStruct.menu_state = MENU_STATE_TOP;
+				Menus_Init(FULL_BRIGHTNESS);
+				DoMenus(MENU_DRAW_ONLY);
+			}
+#endif
 			if ((activation_flag & TIMER_ID_1) == TIMER_ID_1)
 			{
 				if ( flags_from_tim)

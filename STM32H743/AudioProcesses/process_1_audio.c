@@ -21,8 +21,8 @@
  */
 #include "main.h"
 
-#include "../../../A_os/modules/audio/Generators_dont_include_yet/oscillator_core.h"
-#include "../../../A_os/modules/audio/Generators_dont_include_yet/oscillators.h"
+#include "../../../A_os/modules/audio/oscillator_core.h"
+#include "../../../A_os/modules/audio/oscillators.h"
 #include "A_os_includes.h"
 
 void ena_osc(void)
@@ -43,7 +43,6 @@ void ena_osc(void)
 	EnableOscillator(0,82,0);
 	EnableOscillator(0,83,0);
 	EnableOscillator(0,84,0);
-
 }
 void dis_osc(void)
 {
@@ -63,7 +62,6 @@ void dis_osc(void)
 	DisableOscillator(0,82,0);
 	DisableOscillator(0,83,0);
 	DisableOscillator(0,84,0);
-
 }
 void process_1_audio(uint32_t process_id)
 {
@@ -74,6 +72,7 @@ uint32_t	*audiobuf;
 	audiobuf = InitOscillators();
 	StartAudioBuffers(audiobuf);
 	EnableOscillator(0,69,0);
+
 	create_timer(TIMER_ID_0,100,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
 
 	while(1)

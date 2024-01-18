@@ -7,11 +7,12 @@
 
 #ifndef INC_BB101_VCO_MENUS_MENUS_H_
 #define INC_BB101_VCO_MENUS_MENUS_H_
-#define	LINE_SPACING	12
-#define	TITLE_LINE_SPACING	12
+/*
+//#define	LINE_SPACING	12
+#define	LINE_SPACING	13
+#define	TITLE_LINE_SPACING	LINE_SPACING
 #define	MENU_X_TITLE	8
 #define	MENU_Y_TITLE	0
-#define	STD_X_SPACE		1
 #define	LINE1_X			STD_X_SPACE
 #define	LINE1_Y			MENU_Y_TITLE+TITLE_LINE_SPACING
 #define	LINE2_X			STD_X_SPACE
@@ -24,6 +25,9 @@
 #define	LINE5_Y			LINE4_Y+LINE_SPACING
 #define	LINE6_X			0
 #define	LINE6_Y			LINE5_Y+LINE_SPACING
+*/
+#define	STD_X_SPACE		1
+#define	STD_Y_SPACE		1
 
 #define	LINE_X_STATUS	80
 #define	LINE_Y_STATUS	0
@@ -103,11 +107,10 @@ enum MENU_STATUS
 
 typedef struct _MenuStruct_t
 {
-	char 		Header[12];
-	char 		Version[12];
 	uint16_t 	current_brightness;
 	uint8_t 	menu_state;
 	uint8_t 	menu_line_counter;
+	uint8_t 	menu_max_numline;
 	uint8_t 	inputs;
 }MenuStruct_t;
 
@@ -118,7 +121,7 @@ typedef struct _MenuStruct_t
 #define	DIRECTION_DECREMENT			0
 #define	DIRECTION_INCREMENT			1
 
-#define	MENU_MAX_TOP_LINE			4
+#define	MENU_MAX_TOP_LINE			3
 #define	MENU_MAX_OSC_LINE			6
 #define	MENU_MAX_OSC_WAVE_LINE		5
 #define	MENU_MAX_OSC_DUTY_LINE		5
@@ -134,10 +137,12 @@ typedef struct _MenuStruct_t
 
 typedef struct _ScreenTypeDef
 {
-	char		line[9];
-	uint16_t	x,y;
+	char		line[20];
 	uint16_t	fcolor;
 	uint16_t	bcolor;
+	uint16_t	x,y;
+	uint8_t		y_line_spacing;
+	uint8_t		line_counter;
 }ScreenTypeDef;
 
 extern	void Menus_Init(uint16_t brightness);
