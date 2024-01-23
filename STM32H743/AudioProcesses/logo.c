@@ -23,7 +23,7 @@
 #include "main.h"
 #include "A_os_includes.h"
 
-#ifdef BB1xx_743
+#ifdef BB2xx_743
 
 __attribute__((section(".table"))) const uint16_t logo[12800] =
 {

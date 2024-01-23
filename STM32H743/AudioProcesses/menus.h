@@ -110,13 +110,12 @@ typedef struct _MenuStruct_t
 	uint16_t 	current_brightness;
 	uint8_t 	menu_state;
 	uint8_t 	menu_line_counter;
-	uint8_t 	menu_max_numline;
 	uint8_t 	inputs;
 }MenuStruct_t;
 
 #define	ENCODER_CLK					0x01
-#define	ENCODER_BUTTON				0x02
-#define	ENCODER_DATA				0x04
+#define	ENCODER_DATA				0x02
+#define	ENCODER_BUTTON				0x04
 
 #define	DIRECTION_DECREMENT			0
 #define	DIRECTION_INCREMENT			1
@@ -134,20 +133,33 @@ typedef struct _MenuStruct_t
 #define	MENU_MAX_PGM_LINE			4
 
 #define	MENU_DRAW_ONLY				0
-
-typedef struct _ScreenTypeDef
+#define	LEFTMENU_NUMCHAR			18
+#define	RIGHTMENU_NUMCHAR			8
+typedef struct _ScreenLeftTypeDef
 {
-	char		line[20];
+	char		line[18];
 	uint16_t	fcolor;
 	uint16_t	bcolor;
-	uint16_t	x,y;
+	uint8_t		x,y;
 	uint8_t		y_line_spacing;
 	uint8_t		line_counter;
-}ScreenTypeDef;
+	uint16_t	numlines;
+}ScreenLeftTypeDef;
+
+typedef struct _ScreenRightTypeDef
+{
+	char		line[8];
+	uint16_t	fcolor;
+	uint16_t	bcolor;
+	uint8_t		x,y;
+	uint8_t		y_line_spacing;
+	uint8_t		line_counter;
+	uint16_t	numlines;
+}ScreenRightTypeDef;
 
 extern	void Menus_Init(uint16_t brightness);
 extern	void Main_Menu(void);
-extern	void DoMenus(uint32_t event);
+extern	void DoMenus(void);
 extern	void MenusDrawStatus(void);
 extern	void MenusDrawEmptyStatus(void);
 extern	void Draw_Waveform(uint8_t oscillator_offset,uint8_t waveform);

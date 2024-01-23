@@ -11,27 +11,30 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * Project : bb1xx_743_00 
+ * Project : A_os
 */
 /*
- * A_os_AudioInclude.h
+ * microsd_op.h
  *
- *  Created on: Jan 3, 2024
+ *  Created on: Jan 22, 2024
  *      Author: fil
  */
 
-#ifndef STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_
-#define STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_
-#include "../../../A_os/kernel/system_default.h"
-#ifdef BB1xx_743
+#ifndef STM32H743_AUDIOPROCESSES_MICROSD_OP_H_
+#define STM32H743_AUDIOPROCESSES_MICROSD_OP_H_
 
-/*
-#include "../../../A_os/drivers/internal_adc/internal_adc.h"
-#include "../../../A_os/drivers/lcd_st7735/st7735.h"
-#include "../../../A_os/drivers/lcd_st7735/lcd_7735.h"
-extern	void Draw_Logo(uint16_t *logo);
-*/
+typedef struct
+{
+	uint8_t		card_status;
+	char		file_name[32];
 
-#endif	//#ifdef BB1xx_743
 
-#endif /* STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_ */
+}SDcard_t;
+/* card_status */
+#define		CARD_MOUNTED		0x40
+#define		CARD_DETECTED		0x80
+
+
+extern	uint8_t	microsd_detect(void);
+
+#endif /* STM32H743_AUDIOPROCESSES_MICROSD_OP_H_ */

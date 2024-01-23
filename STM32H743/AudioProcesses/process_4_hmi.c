@@ -25,36 +25,90 @@
 #include "A_os_AudioInclude.h"
 #include "menus.h"
 
-extern	MenuStruct_t	MenuStruct;
+#ifdef SDCARD_ENABLED
+#include "microsd_op.h"
+#endif
+
+MenuStruct_t	MenuStruct;
+SDcard_t		SDcard;
 
 extern	TIM_HandleTypeDef htim17;
-uint8_t	valenc[256] , validx=0;
 
-uint16_t	counterhi=0,counterlo=0;
-void encoder_debouncer(void)
+extern	char 	SDPath[4];   /* SD logical drive path */
+extern	FATFS 	SDFatFS;    /* File system object for SD logical drive */
+extern	FIL 	SDFile;       /* File object for SD */
+
+void encoder_button_irq_callback(void)
 {
 	MenuStruct.inputs |= ENCODER_BUTTON;
 }
 
 void encoder_clock_irq_callback(uint16_t GPIO_Pin)
 {
-	if ( GPIO_Pin == ENCODER1_PHASE_Pin )
+	if ( (MenuStruct.inputs & ENCODER_CLK ) == 0 )
+		MenuStruct.inputs = (HAL_GPIO_ReadPin(ENCODER1_DATA_GPIO_Port, ENCODER1_DATA_Pin)<<1 ) | ENCODER_CLK;
+}
+
+
+uint32_t	wk1err=0,splash_duration_timticks;
+
+void process4_menus(void)
+{
+uint16_t	logo_brightness=FULL_BRIGHTNESS;
+
+	switch(MenuStruct.menu_state)
 	{
-		if ( (MenuStruct.inputs & ENCODER_CLK ) == 0 )
+	case	MENU_SPLASH:
+		if ( splash_duration_timticks > 0)
 		{
-			HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-			MenuStruct.inputs |= ENCODER_CLK;
-			MenuStruct.inputs |= HAL_GPIO_ReadPin(ENCODER1_DATA_GPIO_Port, ENCODER1_DATA_Pin)<<1;
+			splash_duration_timticks--;
+			LcdSetBrightness(logo_brightness);
 		}
+		else
+		{
+
+			LcdSetBrightness(ZERO_BRIGHTNESS);
+			MenuStruct.menu_state = MENU_STATE_TOP;
+			Menus_Init(ZERO_BRIGHTNESS);
+			LcdSetBrightness(FULL_BRIGHTNESS);
+			MenuStruct.inputs = 0;
+			DoMenus();
+		}
+		break;
+	default:
+		if ( MenuStruct.inputs)
+		{
+			DoMenus();
+		}
+		break;
 	}
 }
 
-uint32_t	activation_flag,wk1err=0,tim0=0,tim1=0;
+uint8_t process4_sdcard(void)
+{
+uint8_t	ret_val = 1;
+	if ( microsd_detect() )
+	{
+		if (( SDcard.card_status & CARD_MOUNTED) == CARD_MOUNTED )
+			ret_val = 0;
+		else
+		{
+			if(f_mount(&SDFatFS, (TCHAR const*)SDPath, 0) == FR_OK)
+			{
+				SDcard.card_status |= CARD_MOUNTED;
+				ret_val = 0;
+			}
+		}
+	}
+	else
+		SDcard.card_status &= ~( CARD_DETECTED | CARD_MOUNTED);
+	return ret_val;
+}
+
 void process_4_hmi(void)
 {
 uint32_t	wakeup;
-uint32_t	flags_from_tim = 0;
-uint16_t	logo_brightness=ZERO_BRIGHTNESS;
+
 	allocate_hw(HW_EXT_INT,HWMAN_SINGLE_IRQ);
 	allocate_hw(HW_ADC1,HWMAN_STD_IRQ);
 	allocate_hw(HW_ADC2,HWMAN_STD_IRQ);
@@ -62,11 +116,11 @@ uint16_t	logo_brightness=ZERO_BRIGHTNESS;
 	HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
 	IntAdc_Start();
 	LcdInit();
+	splash_duration_timticks = 5;
 	Draw_Logo(logo);
 	MenuStruct.menu_state = MENU_SPLASH;
 
-	create_timer(TIMER_ID_0,50,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
-	create_timer(TIMER_ID_1,200,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
+	create_timer(TIMER_ID_0,200,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
 	while(1)
 	{
 		wakeup = wait_event(EVENT_TIMER | EVENT_EXT_INT_IRQ);
@@ -74,49 +128,8 @@ uint16_t	logo_brightness=ZERO_BRIGHTNESS;
 			wk1err++;
 		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
 		{
-			activation_flag = get_activation_flags();
-#ifdef	SPLASH
-			if ((activation_flag & TIMER_ID_0) == TIMER_ID_0)
-			{
-				switch(MenuStruct.menu_state)
-				{
-				case	MENU_SPLASH:
-					if ( logo_brightness < FULL_BRIGHTNESS )
-					{
-						logo_brightness +=20;
-						LcdSetBrightness(logo_brightness);
-					}
-					else
-					{
-						MenuStruct.menu_state = MENU_STATE_TOP;
-						Menus_Init(FULL_BRIGHTNESS);
-						DoMenus(MENU_DRAW_ONLY);
-					}
-					break;
-				case	MENU_STATE_TOP:
-					break;
-				}
-			}
-#else
-			if ( MenuStruct.menu_state == MENU_SPLASH)
-			{
-				MenuStruct.menu_state = MENU_STATE_TOP;
-				Menus_Init(FULL_BRIGHTNESS);
-				DoMenus(MENU_DRAW_ONLY);
-			}
-#endif
-			if ((activation_flag & TIMER_ID_1) == TIMER_ID_1)
-			{
-				if ( flags_from_tim)
-					DoMenus(flags_from_tim);
-				flags_from_tim = 0;
-				MenuStruct.inputs = 0;
-				HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-			}
+			process4_menus();
+			process4_sdcard();
 		}
-		if (( wakeup & WAKEUP_FROM_EXT_INT_IRQ) == WAKEUP_FROM_EXT_INT_IRQ)
-			flags_from_tim = get_activation_flags();
 	}
-
-
 }

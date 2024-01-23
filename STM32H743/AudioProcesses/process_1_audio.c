@@ -78,6 +78,7 @@ uint32_t	*audiobuf;
 	while(1)
 	{
 		wakeup = wait_event(EVENT_TIMER);
+		/*
 		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
 		{
 			if ( dir == 1 )
@@ -93,5 +94,6 @@ uint32_t	*audiobuf;
 				//dis_osc();
 			}
 		}
+		*/
 	}
 }
