@@ -22,16 +22,13 @@
 
 #ifndef STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_
 #define STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_
+
 #include "../../../A_os/kernel/system_default.h"
-#ifdef BB1xx_743
+#ifdef BB2xx_743
 
-/*
-#include "../../../A_os/drivers/internal_adc/internal_adc.h"
-#include "../../../A_os/drivers/lcd_st7735/st7735.h"
-#include "../../../A_os/drivers/lcd_st7735/lcd_7735.h"
-extern	void Draw_Logo(uint16_t *logo);
-*/
+#include "../../../A_os/modules/audio/oscillator_core.h"
+#include "../../../A_os/modules/audio/oscillators.h"
 
-#endif	//#ifdef BB1xx_743
+#endif	//#ifdef BB2xx_743
 
 #endif /* STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_ */

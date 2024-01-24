@@ -21,9 +21,8 @@
  */
 #include "main.h"
 
-#include "../../../A_os/modules/audio/oscillator_core.h"
-#include "../../../A_os/modules/audio/oscillators.h"
 #include "A_os_includes.h"
+#include "A_os_AudioInclude.h"
 
 void ena_osc(void)
 {
