@@ -24,6 +24,10 @@
 #include "A_os_includes.h"
 #include "A_os_AudioInclude.h"
 
+//#define	LOOPBACK_TEST
+#define	OSCILLATORS_TEST
+
+#ifdef	OSCILLATORS_TEST
 void ena_osc(void)
 {
 	EnableOscillator(0,69,0);
@@ -62,22 +66,27 @@ void dis_osc(void)
 	DisableOscillator(0,83,0);
 	DisableOscillator(0,84,0);
 }
+#endif
+
+int16_t	audio_in_buf[AUDIO_BUF_SIZE*2],audio_out_buf[AUDIO_BUF_SIZE*2];
+
+#ifdef	OSCILLATORS_TEST
+
 void process_1_audio(uint32_t process_id)
 {
-uint32_t	wakeup;
+uint32_t	wakeup,flags;
 uint8_t	dir = 1;
-uint32_t	*audiobuf;
-
-	audiobuf = InitOscillators();
-	StartAudioBuffers(audiobuf);
+	InitOscillators();
+	StartAudioBuffers(audio_in_buf,audio_out_buf);
 	EnableOscillator(0,69,0);
 
 	create_timer(TIMER_ID_0,100,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
 
 	while(1)
 	{
-		wakeup = wait_event(EVENT_TIMER);
-		/*
+		wait_event(EVENT_TIMER);
+		get_wakeup_flags(&wakeup,&flags);
+
 		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
 		{
 			if ( dir == 1 )
@@ -93,6 +102,25 @@ uint32_t	*audiobuf;
 				//dis_osc();
 			}
 		}
-		*/
 	}
 }
+#endif
+#ifdef	LOOPBACK_TEST
+
+int16_t	audio_in_buf[AUDIO_BUF_SIZE*2],audio_out_buf[AUDIO_BUF_SIZE*2];
+
+void process_1_audio(uint32_t process_id)
+{
+uint32_t	wakeup;
+
+	StartAudioBuffers(audio_in_buf,audio_out_buf);
+	create_timer(TIMER_ID_0,200,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
+	while(1)
+	{
+		wakeup = wait_event(EVENT_TIMER | EVENT_EXT_INT_IRQ);
+		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
+		{
+		}
+	}
+}
+#endif

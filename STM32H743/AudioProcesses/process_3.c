@@ -26,11 +26,12 @@
 
 void process_3(uint32_t process_id)
 {
-uint32_t	wakeup;
+uint32_t	wakeup,flags;
 
 	create_timer(TIMER_ID_0,500,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
 	while(1)
 	{
-		wakeup = wait_event(EVENT_TIMER);
+		wait_event(EVENT_TIMER);
+		get_wakeup_flags(&wakeup,&flags);
 	}
 }

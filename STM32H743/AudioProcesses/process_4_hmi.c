@@ -107,7 +107,7 @@ uint8_t	ret_val = 1;
 
 void process_4_hmi(void)
 {
-uint32_t	wakeup;
+uint32_t	wakeup,flags;
 
 	allocate_hw(HW_EXT_INT,HWMAN_SINGLE_IRQ);
 	allocate_hw(HW_ADC1,HWMAN_STD_IRQ);
@@ -123,7 +123,8 @@ uint32_t	wakeup;
 	create_timer(TIMER_ID_0,200,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
 	while(1)
 	{
-		wakeup = wait_event(EVENT_TIMER | EVENT_EXT_INT_IRQ);
+		wait_event(EVENT_TIMER);
+		get_wakeup_flags(&wakeup,&flags);
 		if ( wakeup == 0 )
 			wk1err++;
 		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
