@@ -13,6 +13,9 @@ extern	void process_2_fat_flash(uint32_t process_id);		//This is process2
 extern	void process_3(uint32_t process_id);				//This is process3
 extern	void process_4_hmi(uint32_t process_id);			//This is process4
 
+VERSIONING	uint8_t	app_name[32] 		= "BB201 VCO";
+VERSIONING	uint8_t	app_version[32] 	= "1.0.0";
+
 USRprcs_t	UserProcesses[USR_PROCESS_NUMBER] =
 {
 		{
