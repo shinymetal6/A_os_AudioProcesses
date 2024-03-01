@@ -11,6 +11,8 @@
 #include "A_os_AudioInclude.h"
 #include "menus.h"
 
+#ifdef LCD_096_ENABLED
+
 extern	MenuStruct_t	MenuStruct;
 ScreenLeftTypeDef	*current_left_screen;
 ScreenRightTypeDef	*current_right_screen;
@@ -267,3 +269,4 @@ void Menus_Init(uint16_t brightness)
 	Main_Menu();
 }
 
+#endif // #ifdef LCD_096_ENABLED

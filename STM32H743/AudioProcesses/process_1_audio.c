@@ -69,38 +69,86 @@ void dis_osc(void)
 #endif
 
 int16_t	audio_in_buf[AUDIO_BUF_SIZE*2],audio_out_buf[AUDIO_BUF_SIZE*2];
+extern	void Iir_S_configure(uint8_t Type, uint16_t Frequency, float iir_Q);
 
 #ifdef	OSCILLATORS_TEST
+
+uint8_t	state = 0;
+void do_err()
+{
+	__disable_irq();
+	while(1);
+}
 
 void process_1_audio(uint32_t process_id)
 {
 uint32_t	wakeup,flags;
-uint8_t	dir = 1;
-	InitOscillators();
-	StartAudioBuffers(audio_in_buf,audio_out_buf);
-	EnableOscillator(0,69,0);
+uint16_t	freq=90;
 
-	create_timer(TIMER_ID_0,100,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
+uint16_t	iir_freq=100;
+uint8_t		type=BIQUAD_HIGH_PASS;
+float		iirQ=0.6f;
+float		resonance=2.5f;
+
+uint8_t		volume=100;
+
+	InitEffectsSequencer();
+
+	InitOscillators();
+	SetGeneratorMode();
+
+	PassThrough_init();
+	PassThrough_enable();
+
+	Iir_init(type, iir_freq, iirQ);
+	Iir_enable();
+
+	Vca_init(volume);
+	Vca_enable();
+
+	InsertBlockEffect(Do_PassThrough,0,EFFECT_ENABLED);
+	InsertBlockEffect(Do_iir,1,EFFECT_ENABLED);
+	InsertBlockEffect(Do_PassThrough,2,EFFECT_ENABLED);
+	InsertBlockEffect(Do_Vca,3,EFFECT_ENABLED);
+
+	StartAudioBuffers(audio_in_buf,audio_out_buf);
+	EnableOscillator(0,freq,0);
+
+	create_timer(TIMER_ID_0,300,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
 
 	while(1)
 	{
 		wait_event(EVENT_TIMER);
 		get_wakeup_flags(&wakeup,&flags);
-
+		if ( wakeup == 0 )
+			do_err();
 		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
 		{
-			if ( dir == 1 )
-			{
-				dir = 0;
-				EnableOscillator(0,69,0);
-				//ena_osc();
-			}
+			/*
+			DisableOscillator(0,freq,0);
+			freq++;
+			if ( freq > 100 )
+				freq = 10;
+			EnableOscillator(0,freq,0);
+			*/
+			iir_freq += 100;
+			if ( iir_freq > 4000 )
+				iir_freq = 100;
+			Iir_configure(type, iir_freq, iirQ);
+			if ( volume == 100 )
+				volume /= 2;
 			else
-			{
-				dir = 1;
-				DisableOscillator(0,69,0);
-				//dis_osc();
-			}
+				volume = 100;
+
+			Vca_setMasterVolume(volume);
+			/*
+			if ( state == 0 )
+				EnableOscillator(0,freq,0);
+			else
+				DisableOscillator(0,freq,0);
+			state++;
+			state &= 1;
+			*/
 		}
 	}
 }
@@ -111,13 +159,18 @@ int16_t	audio_in_buf[AUDIO_BUF_SIZE*2],audio_out_buf[AUDIO_BUF_SIZE*2];
 
 void process_1_audio(uint32_t process_id)
 {
-uint32_t	wakeup;
+	uint32_t	wakeup,flags;
 
+	SetEffectMode();
+	SetMasterVolume(75);
+	iir_set_params(1,1000,0.7F);
 	StartAudioBuffers(audio_in_buf,audio_out_buf);
 	create_timer(TIMER_ID_0,200,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
 	while(1)
 	{
-		wakeup = wait_event(EVENT_TIMER | EVENT_EXT_INT_IRQ);
+		wait_event(EVENT_TIMER | EVENT_EXT_INT_IRQ);
+		get_wakeup_flags(&wakeup,&flags);
+
 		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
 		{
 		}

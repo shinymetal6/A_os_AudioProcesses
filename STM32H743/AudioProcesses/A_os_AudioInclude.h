@@ -24,11 +24,12 @@
 #define STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_
 
 #include "../../../A_os/kernel/system_default.h"
-#ifdef BB2xx_743
+#ifdef VB1xx
 
 #include "../../../A_os/modules/audio/oscillator_core.h"
 #include "../../../A_os/modules/audio/oscillators.h"
+#include "../../../A_os/modules/audio/effects.h"
 
-#endif	//#ifdef BB2xx_743
+#endif	//#ifdef VB1xx
 
 #endif /* STM32H743_AUDIOPROCESSES_A_OS_AUDIOINCLUDE_H_ */

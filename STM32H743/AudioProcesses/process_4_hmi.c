@@ -23,6 +23,8 @@
 #include "main.h"
 #include "A_os_includes.h"
 #include "A_os_AudioInclude.h"
+#ifdef LCD_096_ENABLED
+
 #include "menus.h"
 
 #ifdef SDCARD_ENABLED
@@ -105,6 +107,7 @@ uint8_t	ret_val = 1;
 	return ret_val;
 }
 
+
 void process_4_hmi(void)
 {
 uint32_t	wakeup,flags;
@@ -134,3 +137,36 @@ uint32_t	wakeup,flags;
 		}
 	}
 }
+#else
+extern	uint16_t mk_240x320_width;
+extern	uint16_t mk_240x320_height;
+extern	uint16_t mk_240x320[];
+
+
+void process_4_hmi(void)
+{
+uint32_t	wakeup,flags;
+uint8_t	toggle = 0;
+
+	LcdInit();
+	create_timer(TIMER_ID_0,100,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
+	while(1)
+	{
+		wait_event(EVENT_TIMER);
+		get_wakeup_flags(&wakeup,&flags);
+		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
+		{
+			if ( toggle  )
+			{
+				toggle = 0;
+				ILI9341_DrawImage(0, 0, mk_240x320_width, mk_240x320_height, mk_240x320);
+			}
+			else
+			{
+				toggle++;
+				LcdClearScreen(0xF800);
+			}
+		}
+	}
+}
+#endif // #ifdef LCD_096_ENABLED
