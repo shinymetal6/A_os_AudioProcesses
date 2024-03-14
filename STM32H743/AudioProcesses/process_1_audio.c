@@ -92,6 +92,9 @@ float		resonance=2.5f;
 
 uint8_t		volume=100;
 
+	if ( allocate_hw(HW_I2C1,HWMAN_STD_IRQ) == HW_I2C1 )
+		Nau88c22_Init();
+
 	InitEffectsSequencer();
 
 	InitOscillators();
@@ -112,6 +115,7 @@ uint8_t		volume=100;
 	InsertBlockEffect(Do_Vca,3,EFFECT_ENABLED);
 
 	StartAudioBuffers(audio_in_buf,audio_out_buf);
+
 	EnableOscillator(0,freq,0);
 
 	create_timer(TIMER_ID_0,300,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
@@ -133,7 +137,9 @@ uint8_t		volume=100;
 			*/
 			iir_freq += 100;
 			if ( iir_freq > 4000 )
+			{
 				iir_freq = 100;
+			}
 			Iir_configure(type, iir_freq, iirQ);
 			if ( volume == 100 )
 				volume /= 2;
@@ -141,6 +147,7 @@ uint8_t		volume=100;
 				volume = 100;
 
 			Vca_setMasterVolume(volume);
+
 			/*
 			if ( state == 0 )
 				EnableOscillator(0,freq,0);

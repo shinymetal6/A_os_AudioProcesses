@@ -11,20 +11,20 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * Project : bb1xx_743_00 
+ * Project : A_os
 */
 /*
- * process_3.c
+ * process_2.c
  *
- *  Created on: Jan 3, 2024
+ *  Created on: Mar 14, 2024
  *      Author: fil
  */
-
 #include "main.h"
-#include "A_os_includes.h"
 
-uint32_t	process_3_wk1err,process_3_wk1call;
-void process_3(uint32_t process_id)
+#include "A_os_includes.h"
+#include "A_os_AudioInclude.h"
+
+void process_2(uint32_t process_id)
 {
 uint32_t	wakeup,flags;
 
@@ -34,11 +34,5 @@ uint32_t	wakeup,flags;
 	{
 		wait_event(EVENT_TIMER);
 		get_wakeup_flags(&wakeup,&flags);
-		if ( wakeup == 0 )
-			process_3_wk1err++;
-		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
-		{
-			process_3_wk1call++;
-		}
 	}
 }

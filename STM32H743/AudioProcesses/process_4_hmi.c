@@ -111,19 +111,19 @@ uint8_t	ret_val = 1;
 void process_4_hmi(void)
 {
 uint32_t	wakeup,flags;
+uint8_t		led_cntr = 0;
 
 	allocate_hw(HW_EXT_INT,HWMAN_SINGLE_IRQ);
 	allocate_hw(HW_ADC1,HWMAN_STD_IRQ);
 	allocate_hw(HW_ADC2,HWMAN_STD_IRQ);
 	allocate_hw(HW_SPI1,HWMAN_STD_IRQ);
-	HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
 	IntAdc_Start();
 	LcdInit();
 	splash_duration_timticks = 5;
 	Draw_Logo(logo);
 	MenuStruct.menu_state = MENU_SPLASH;
 
-	create_timer(TIMER_ID_0,200,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
+	create_timer(TIMER_ID_0,100,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
 	while(1)
 	{
 		wait_event(EVENT_TIMER);
@@ -134,6 +134,14 @@ uint32_t	wakeup,flags;
 		{
 			process4_menus();
 			process4_sdcard();
+			led_cntr++;
+			if ( led_cntr == 8 )
+				  HAL_GPIO_WritePin(LED_GPIOPORT, LED_GPIOBIT, GPIO_PIN_RESET);
+			if ( led_cntr == 9 )
+			{
+				  HAL_GPIO_WritePin(LED_GPIOPORT, LED_GPIOBIT, GPIO_PIN_SET);
+				  led_cntr = 0;
+			}
 		}
 	}
 }

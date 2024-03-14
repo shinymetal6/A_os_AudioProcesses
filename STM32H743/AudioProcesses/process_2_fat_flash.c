@@ -78,18 +78,22 @@ uint8_t		res;
 }
 #else
 
-uint8_t		*storage;
-uint32_t	flash_size;
+//uint8_t		*storage;
+//uint32_t	flash_size;
 void process_2_fat_flash(uint32_t process_id)
 {
 uint32_t	wakeup,flags;
-	create_timer(TIMER_ID_0,5000,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
+
+	create_timer(TIMER_ID_0,300,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
+
 	while(1)
 	{
 		wait_event(EVENT_TIMER);
 		get_wakeup_flags(&wakeup,&flags);
+		/*
 		storage = (uint8_t *)get_flash_storage_ptr();
 		flash_size = get_flash_size();
+		*/
 		//copy_code(storage);
 		//flash_update(storage,flash_size);
 	}
