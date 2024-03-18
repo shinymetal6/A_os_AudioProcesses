@@ -79,21 +79,25 @@ void do_err()
 	__disable_irq();
 	while(1);
 }
-
+#define	FROM_MIDI
 void process_1_audio(uint32_t process_id)
 {
 uint32_t	wakeup,flags;
-uint16_t	freq=90;
 
 uint16_t	iir_freq=100;
 uint8_t		type=BIQUAD_HIGH_PASS;
 float		iirQ=0.6f;
+
+#ifndef FROM_MIDI
+uint16_t	freq=90;
 float		resonance=2.5f;
+#endif
 
 uint8_t		volume=100;
 
 	if ( allocate_hw(HW_I2C1,HWMAN_STD_IRQ) == HW_I2C1 )
 		Nau88c22_Init();
+	allocate_hw(HW_USB_DEVICE,HWMAN_STD_IRQ);
 
 	InitEffectsSequencer();
 
@@ -116,7 +120,9 @@ uint8_t		volume=100;
 
 	StartAudioBuffers(audio_in_buf,audio_out_buf);
 
+#ifndef FROM_MIDI
 	EnableOscillator(0,freq,0);
+#endif
 
 	create_timer(TIMER_ID_0,300,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED);
 
@@ -128,13 +134,7 @@ uint8_t		volume=100;
 			do_err();
 		if (( wakeup & WAKEUP_FROM_TIMER) == WAKEUP_FROM_TIMER)
 		{
-			/*
-			DisableOscillator(0,freq,0);
-			freq++;
-			if ( freq > 100 )
-				freq = 10;
-			EnableOscillator(0,freq,0);
-			*/
+#ifndef FROM_MIDI
 			iir_freq += 100;
 			if ( iir_freq > 4000 )
 			{
@@ -147,15 +147,7 @@ uint8_t		volume=100;
 				volume = 100;
 
 			Vca_setMasterVolume(volume);
-
-			/*
-			if ( state == 0 )
-				EnableOscillator(0,freq,0);
-			else
-				DisableOscillator(0,freq,0);
-			state++;
-			state &= 1;
-			*/
+#endif
 		}
 	}
 }

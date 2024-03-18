@@ -120,7 +120,6 @@ uint8_t		led_cntr = 0;
 	allocate_hw(HW_SPILCD,HWMAN_STD_IRQ);
 
 	IntAdc_Start();
-	//LcdInit();
 	splash_duration_timticks = 5;
 	Draw_Logo(logo);
 	MenuStruct.menu_state = MENU_SPLASH;
@@ -139,7 +138,7 @@ uint8_t		led_cntr = 0;
 			led_cntr++;
 			if ( led_cntr == 8 )
 				  HAL_GPIO_WritePin(LED_GPIOPORT, LED_GPIOBIT, GPIO_PIN_RESET);
-			if ( led_cntr == 9 )
+			if ( led_cntr >= 9 )
 			{
 				  HAL_GPIO_WritePin(LED_GPIOPORT, LED_GPIOBIT, GPIO_PIN_SET);
 				  led_cntr = 0;
@@ -157,8 +156,9 @@ void process_4_hmi(void)
 {
 uint32_t	wakeup,flags;
 uint8_t	toggle = 0;
+uint8_t		led_cntr = 0;
 
-	LcdInit();
+	allocate_hw(HW_SPILCD,HWMAN_STD_IRQ);
 	create_timer(TIMER_ID_0,100,TIMERFLAGS_FOREVER | TIMERFLAGS_ENABLED );
 	while(1)
 	{
@@ -175,6 +175,14 @@ uint8_t	toggle = 0;
 			{
 				toggle++;
 				LcdClearScreen(0xF800);
+			}
+			led_cntr++;
+			if ( led_cntr == 8 )
+				  HAL_GPIO_WritePin(LED_GPIOPORT, LED_GPIOBIT, GPIO_PIN_RESET);
+			if ( led_cntr >= 9 )
+			{
+				  HAL_GPIO_WritePin(LED_GPIOPORT, LED_GPIOBIT, GPIO_PIN_SET);
+				  led_cntr = 0;
 			}
 		}
 	}
