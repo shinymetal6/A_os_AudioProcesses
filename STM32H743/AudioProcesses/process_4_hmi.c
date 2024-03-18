@@ -117,8 +117,10 @@ uint8_t		led_cntr = 0;
 	allocate_hw(HW_ADC1,HWMAN_STD_IRQ);
 	allocate_hw(HW_ADC2,HWMAN_STD_IRQ);
 	allocate_hw(HW_SPI1,HWMAN_STD_IRQ);
+	allocate_hw(HW_SPILCD,HWMAN_STD_IRQ);
+
 	IntAdc_Start();
-	LcdInit();
+	//LcdInit();
 	splash_duration_timticks = 5;
 	Draw_Logo(logo);
 	MenuStruct.menu_state = MENU_SPLASH;

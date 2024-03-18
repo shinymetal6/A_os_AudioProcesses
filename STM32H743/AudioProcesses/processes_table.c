@@ -21,18 +21,18 @@ USRprcs_t	UserProcesses[USR_PROCESS_NUMBER] =
 {
 		{
 				.user_process = process_1_audio,
-				.stack_size = 4096,
+				.stack_size = 2048,
 		},
 		{
 				.user_process = process_2,
-				.stack_size = 4096,
+				.stack_size = 2048,
 		},
 		{
 				.user_process = process_3,
-				.stack_size = 4096,
+				.stack_size = 2048,
 		},
 		{
 				.user_process = process_4_hmi,
-				.stack_size = 4096,
+				.stack_size = 2048,
 		}
 };
