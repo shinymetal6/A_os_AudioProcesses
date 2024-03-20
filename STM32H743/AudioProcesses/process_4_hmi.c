@@ -116,8 +116,9 @@ uint8_t		led_cntr = 0;
 	allocate_hw(HW_EXT_INT,HWMAN_SINGLE_IRQ);
 	allocate_hw(HW_ADC1,HWMAN_STD_IRQ);
 	allocate_hw(HW_ADC2,HWMAN_STD_IRQ);
-	allocate_hw(HW_SPI1,HWMAN_STD_IRQ);
-	allocate_hw(HW_SPILCD,HWMAN_STD_IRQ);
+	//allocate_hw(HW_SPI1,HWMAN_STD_IRQ);
+	/* complex device, use allocate_hw_with_irq_callback instead of allocate_hw */
+	allocate_hw_with_irq_callback(HW_SPI1,HW_SPILCD,HWMAN_STD_IRQ,A_os_7735_SPI_TxCpltCallback);
 
 	IntAdc_Start();
 	splash_duration_timticks = 5;
